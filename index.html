@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>The Metropolis</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+        <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>       
+    </head>
+    <body>                                  
+        <div id="app" class="container">
+            <div class="columns">
+                <div class="column is-one-fifth">
+                    <div class="field">
+                        <label class="label">Room Number</label>
+                        <div class="control">
+                            <input class="input is-info is-large" ref="room_ref" type="text" placeholder="Room Number" v-model="room" @focus="true">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Address</label>
+                        <div class="control">
+                            <input class="input is-info is-large" type="text" placeholder="Address" v-model="address">
+                        </div>
+                    </div>
+                </div>       
+            </div>                
+        </div>
+        <script src="https://unpkg.com/vue"></script>        
+        <script>
+            new Vue({
+                el: '#app',
+                data: {
+                    room: ''
+                },
+                mounted (){
+                    this.$nextTick(function() {                        
+                        this.$refs.room_ref.focus();
+                    });                  
+                },
+                computed: {
+                    address: function(){
+                        try{                            
+                            var b = this.room.charAt(0).toLowerCase();
+                            var fStart = {a:7, b:7, c:2};
+                            var fEnd = {a:39, b:30, c:7};
+                            var aStart = {a:1, b:1036, c:1578};
+                            var mul = {a:32, b:23, c:24};
+                            var floor = 0;
+                            var room = parseInt(this.room.slice(-2));                            
+                            switch(this.room.length){
+                                case 4: floor = parseInt(this.room.slice(1,2)); break;
+                                case 5: floor = parseInt(this.room.slice(1,3)); break;
+                                case 6: floor = 13; break;
+                                default: throw new Error("Invalid room pattern.")
+                            }                            
+
+                            if(floor<fStart[b] || floor>fEnd[b] || (floor==13&&this.room.slice(3,4).toLowerCase()!='a'))throw new Error('Invalid floor number.') ;
+                            var offset = b=='a' && floor==14 && room>=23 ? -4 : b == 'a' && room>14 ? -2 : -1;                             
+                            offset -= b=='a' && floor>14 ? 3 : b=='a' && floor>12 ? 1 : 0;                            
+                            var result = aStart[b]+(mul[b]*(floor-fStart[b]))+room+offset;
+
+                            return '954/'+ (result || '');                        
+                        }catch(ex){                            
+                            return '954/';
+                        }
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
